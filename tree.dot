@@ -1,0 +1,7 @@
+digraph {
+	"40 45" -> "15 70"[color=blue,penwidth=3.0];
+	"40 45" -> "70 10"[color=red,penwidth=3.0];
+	"70 10" -> "69 50"[color=red,penwidth=3.0];
+	"69 50" -> "66 85"[color=blue,penwidth=3.0];
+	"69 50" -> "85 90"[color=red,penwidth=3.0];
+}

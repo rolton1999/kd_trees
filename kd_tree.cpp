@@ -1,7 +1,3 @@
-#include <fstream>
-#include <fstream>
-#include <vector>
-
 #include "kd_node.hpp"
 #include "kd_tree.hpp"
 
@@ -11,69 +7,93 @@ void kd_tree::input(const char * filename)
 
     double temp[N] = {0};
 
-    int index_dev = 0;
     int index_vec = -1;
-    int index_par = -1;
 
     while (input_file >> temp[0]) {
-        for (size_t j = 1; j < N; j++) {
+        for (std::size_t j = 1; j < N; j++) {
             input_file >> temp[j];
         }
-        push(temp, index_vec, index_dev, index_par);
+        push(temp, index_vec, -1, -1);
     }
 
     input_file.close();
-    std::ofstream output_file("tree.dot");
-    output_file << "digraph {" << std::endl;
-    save(0, output_file);
-    output_file << "}";
-
 }
 
-void kd_tree::push(double * temp, int & index_vec, int & index_dev, int index_par)
+void kd_tree::push(double * temp, int & index_vec, int index_dev, int index_par)
 {
-    if (index_dev == N) {
-        index_dev = 0;
-    }
+    /** next split axis */
+    index_dev = (index_dev + 1) % N;
 
     if (index_vec == -1) {
         index_vec = nodes.size();
         nodes.insert(nodes.end(), kd_node(temp, index_dev));
-        if (index_par != -1 && index_dev != 0) {
-            if (nodes[index_vec].value[--index_dev]
-                >= nodes[index_par].value[nodes[index_par].split_index]) {
-                nodes[index_par].right = index_vec;
 
-            } else {
-                nodes[index_par].left = index_vec;
-            }
+        if (index_par != -1 && index_dev != 0) {
+            kd_node & n = nodes[index_par];
+
+            double value = nodes[index_vec].value[--index_dev];
+
+            int & child = (value >= n.value[n.split_index])
+                ? n.right
+                : n.left;
+
+            child = index_vec;
         }
-        return;
     } else {
-        if (temp[index_dev] >= nodes[index_vec].value[nodes[index_vec].split_index]) {
-            index_dev++;
-            push(temp, nodes[index_vec].right, index_dev, index_vec);
-        } else {
-            index_dev++;
-            push(temp, nodes[index_vec].left, index_dev, index_vec);
-        }
+        kd_node & n = nodes[index_vec];
+
+        double value = temp[index_dev];
+
+        int & next = (value >= n.value[n.split_index])
+            ? n.right
+            : n.left;
+
+        push(temp, next, index_dev, index_vec);
     }
 }
 
-void kd_tree::save(int index, std::ofstream & output_file)
+static
+std::string get_info(const kd_node & n)
 {
-    if (index == -1) {
-        return;
-    } else {
-        if (nodes[index].left != -1) {
-            output_file << "\t" << nodes[index].info << " -> ";
-            output_file  << nodes[nodes[index].left].info << "[color=blue,penwidth=3.0]" << ";" << std::endl;
-            save(nodes[index].left, output_file);
-        }
-        if (nodes[index].right != -1) {
-            output_file << "\t" << nodes[index].info << " -> ";
-            output_file  << nodes[nodes[index].right].info << "[color=red,penwidth=3.0]" << ";" << std::endl;
-            save(nodes[index].right, output_file);
-        }
+    std::string info;
+    for (size_t i = 0 ; i < N ; i++) {
+        info += ((i > 0) ? " " : "") + std::to_string((int)n.value[i]);
     }
+    return info;
+}
+
+static
+void save_link(std::ostream &output_file, const std::string & color, int parent_index, int child_index)
+{
+    if (child_index == -1 || parent_index == -1)
+    {
+        return;
+    }
+
+    output_file << "\tN" << parent_index << " -> ";
+    output_file  << "N" << child_index << "[color=" << color << ",penwidth=3.0]" << ";" << std::endl;
+}
+
+void kd_tree::save(std::ostream &output_file)
+{
+    /* save node IDs */
+    output_file << "digraph {" << std::endl;
+    output_file << "# Nodes:" << std::endl;
+
+    std::size_t sz = nodes.size();
+    for (std::size_t i = 0 ; i < sz ; i++)
+    {
+        output_file << "\tN" << i << " [label=\"" << get_info(nodes[i]) << "\"];"<< std::endl;
+    }
+
+    output_file << "# Links:" << std::endl;
+
+    /* save links between nodes */
+    for (std::size_t i = 0 ; i < sz ; i++)
+    {
+        save_link(output_file, "blue", i, nodes[i].left);
+        save_link(output_file, "red",  i, nodes[i].right);
+    }
+
+    output_file << "}" << std::endl;
 }

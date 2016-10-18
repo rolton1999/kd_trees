@@ -8,6 +8,9 @@ int main(int argc, char const *argv[])
     kd_tree tree;
     tree.input("test_for_2d.txt");
 
+    std::ofstream output_file("tree.dot");
+    tree.save(output_file);
+
     return 0;
 }
 
@@ -47,5 +50,3 @@ int main(int argc, char const *argv[])
 66 85
 85 90
 */
-
-// comment

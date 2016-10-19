@@ -97,3 +97,13 @@ void kd_tree::save(std::ostream &output_file)
 
     output_file << "}" << std::endl;
 }
+
+double kd_tree::get_distance(int index, kd_node * other_node)
+{
+    double dist = 0, tmp;
+    for (size_t i = 0; i < N; i++) {
+        tmp = nodes[index].value[i] - other_node -> value[i];
+        dist += tmp*tmp;
+    }
+    return dist;
+}

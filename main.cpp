@@ -11,6 +11,15 @@ int main(int argc, char const *argv[])
     std::ofstream output_file("tree.dot");
     tree.save(output_file);
 
+    double temp = {51, 51};
+    kd_node * other_node = new kd_node(temp, 0);
+    double best_distance;
+    int best_index;
+    tree.seek_nearest(0, other_node, 0, best_index, best_distance);
+    std::cout << "found: ";
+    tree.get_node(best_index);
+    std::cout << "distance: " << best_distance << std::endl;
+
     return 0;
 }
 

@@ -103,7 +103,45 @@ double kd_tree::get_distance(int index, kd_node * other_node)
     double dist = 0, tmp;
     for (size_t i = 0; i < N; i++) {
         tmp = nodes[index].value[i] - other_node -> value[i];
-        dist += tmp*tmp;
+        dist += tmp * tmp;
     }
     return dist;
+}
+
+void kd_tree::seek_nearest(int index_root, kd_node * other_node,
+                    int index_dev, int & best_index, double & best_distance)
+{
+    if (index_root == -1) return;
+
+    double distance = get_distance(index_root, other_node);
+    double temp_div = nodes[index_root].value[nodes[index_root].split_index]
+                    - other_node.value[index_dev];
+    double distance_dev = temp_div * temp_div;
+
+    if (best_index == -1 || distance < best_distance) {
+        best_distance = distance;
+        best_index = index_root;
+        if (!best_distance) return;
+    }
+
+    index_dev = (index_dev + 1) % N;
+
+    nearest(temp_div > 0 ? nodes[index_root].left : nodes[index_root].right,
+            other_node, index_dev, best_index, best_distance);
+    if (distance_dev >= best_distance) return;
+    nearest(temp_div > 0 ? nodes[index_root].right : nodes[index_root].left,
+            other_node, index_dev, best_index, best_distance);
+}
+
+void kd_tree::get_node(int index)
+{
+    std::cout << "(";
+    for (size_t i = 0; i < N; i++) {
+        if (i == N - 1) {
+            std::cout << nodes[index].value[i];
+            break;
+        }
+        std::cout << nodes[index].value[i] << ", ";
+    }
+    std::cout << ")" << std::endl;
 }

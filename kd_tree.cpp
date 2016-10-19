@@ -116,9 +116,9 @@ void kd_tree::seek_nearest(int index_root, kd_node * other_node,
     if (index_root == -1) return;
 
     double distance = get_distance(index_root, other_node);
-    double temp_div = nodes[index_root].value[nodes[index_root].split_index]
+    double temp_direction = nodes[index_root].value[nodes[index_root].split_index]
                     - other_node -> value[index_dev];
-    double distance_dev = temp_div * temp_div;
+    double distance_dev = temp_direction * temp_direction;
 
     if (best_index == -1 || distance < best_distance) {
         best_distance = distance;
@@ -128,10 +128,10 @@ void kd_tree::seek_nearest(int index_root, kd_node * other_node,
 
     index_dev = (index_dev + 1) % N;
 
-    seek_nearest(temp_div > 0 ? nodes[index_root].left : nodes[index_root].right,
+    seek_nearest(temp_direction > 0 ? nodes[index_root].left : nodes[index_root].right,
             other_node, index_dev, best_index, best_distance);
     if (distance_dev >= best_distance) return;
-    seek_nearest(temp_div > 0 ? nodes[index_root].right : nodes[index_root].left,
+    seek_nearest(temp_direction > 0 ? nodes[index_root].right : nodes[index_root].left,
             other_node, index_dev, best_index, best_distance);
 }
 

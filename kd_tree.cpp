@@ -1,6 +1,8 @@
 #include "kd_node.hpp"
 #include "kd_tree.hpp"
 
+#include <iostream>
+
 void kd_tree::input(const char * filename)
 {
     std::ifstream input_file(filename);
@@ -115,7 +117,7 @@ void kd_tree::seek_nearest(int index_root, kd_node * other_node,
 
     double distance = get_distance(index_root, other_node);
     double temp_div = nodes[index_root].value[nodes[index_root].split_index]
-                    - other_node.value[index_dev];
+                    - other_node -> value[index_dev];
     double distance_dev = temp_div * temp_div;
 
     if (best_index == -1 || distance < best_distance) {
@@ -126,10 +128,10 @@ void kd_tree::seek_nearest(int index_root, kd_node * other_node,
 
     index_dev = (index_dev + 1) % N;
 
-    nearest(temp_div > 0 ? nodes[index_root].left : nodes[index_root].right,
+    seek_nearest(temp_div > 0 ? nodes[index_root].left : nodes[index_root].right,
             other_node, index_dev, best_index, best_distance);
     if (distance_dev >= best_distance) return;
-    nearest(temp_div > 0 ? nodes[index_root].right : nodes[index_root].left,
+    seek_nearest(temp_div > 0 ? nodes[index_root].right : nodes[index_root].left,
             other_node, index_dev, best_index, best_distance);
 }
 

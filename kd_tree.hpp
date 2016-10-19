@@ -12,7 +12,7 @@ public:
     void save(std::ostream &output_file);
     double get_distance(int index, kd_node * other_node);
     void seek_nearest(int index_root, kd_node * other_node,
-                        int index_dim, int best_index, double & best_distance);
+                        int index_dim, int & best_index, double & best_distance);
     void get_node(int index);
 
 private:

@@ -2,6 +2,7 @@
 #include "kd_tree.hpp"
 
 #include <iostream>
+#include <cmath>
 
 int main(int argc, char const *argv[])
 {
@@ -18,7 +19,7 @@ int main(int argc, char const *argv[])
     tree.seek_nearest(0, other_node, 0, best_index, best_distance);
     std::cout << "found: ";
     tree.get_node(best_index);
-    std::cout << "distance: " << best_distance << std::endl;
+    std::cout << "distance: " << sqrt(best_distance) << std::endl;
 
     return 0;
 }

@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
     std::ofstream output_file("tree.dot");
     tree.save(output_file);
 
-    double temp[2] = {9, 6.01};
+    double temp[2] = {1, 10.01};
     kd_node * other_node = new kd_node(temp, 0);
     double best_distance;
     int best_index = -1;

@@ -13,10 +13,9 @@ int main(int argc, char const *argv[])
     tree.save(output_file);
 
     double temp[2] = {1, 10.01};
-    kd_node * other_node = new kd_node(temp, 0);
     double best_distance;
     int best_index = -1;
-    tree.seek_nearest(0, other_node, 0, best_index, best_distance);
+    tree.seek_nearest(0, temp, 0, best_index, best_distance);
     std::cout << "found: ";
     tree.get_node(best_index);
     std::cout << "distance: " << sqrt(best_distance) << std::endl;
